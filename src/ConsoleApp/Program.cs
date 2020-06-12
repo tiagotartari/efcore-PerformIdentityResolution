@@ -8,12 +8,33 @@ namespace ConsoleApp
     {
         public static void Main(string[] args)
         {
-            using var db = new SampleAppContext();
-            var orders = db
-                    .Orders
-                    .Include("OrderItems")
+            OnlyAsNoTracking();
+            WithPerformIdentityResolution();
+        }
 
-                .ToList();
+        private static void OnlyAsNoTracking()
+        {
+            using var db = new SampleAppContext();
+            var itens1 = db
+                .OrderItems
+                .AsNoTracking()
+                .Include(p => p.Order)
+                .Where(p => p.OrderId == 1)
+
+            .ToList();
+        }
+
+        private static void WithPerformIdentityResolution()
+        {
+            using var db = new SampleAppContext();
+            var itens2 = db
+                .OrderItems
+                .AsNoTracking()
+                .PerformIdentityResolution()
+                .Include(p => p.Order)
+                .Where(p => p.OrderId == 1)
+
+            .ToList();
         }
     }
 }
